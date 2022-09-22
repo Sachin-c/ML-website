@@ -11,11 +11,28 @@ Promise.all([
 
 function startVideo() {
   
-  navigator.getUserMedia(
+  
+  navigator.mediaDevices.getUserMedia(
     { video: {} },
     stream => video.srcObject = stream,
     err => console.error(err)
   )
+
+  navigator.getWebcam = (navigator.getUserMedia || navigator.webKitGetUserMedia || navigator.moxGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({  audio: true, video: true })
+    .then(function (stream) {
+       video.srcObject = stream
+     })
+     .catch(function (e) { logError(e.name + ": " + e.message); });
+}
+else {
+navigator.getWebcam({ audio: true, video: true }, 
+     function (stream) {
+      video.srcObject = stream
+     }, 
+     function () { logError("Web cam is not accessible."); });
+}
 }
 
 video.addEventListener('play', () => {
